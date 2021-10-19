@@ -170,18 +170,6 @@ class GameOfLife:
     def __init__(self, size: Tuple[int, int], rand: bool) -> None:
         self._grid = Grid(size=size, rand=rand)
 
-    def run(self, iters: int=1_000):
-        """
-        Starts the game
-        """
-        count = iters
-        while count > 0:
-            self.update()
-            self.display()
-            count -= 1
-
-            time.sleep(DISPLAY_DELAY)
-
     def update(self) -> None:
         """
         Updates the next generation of cells
