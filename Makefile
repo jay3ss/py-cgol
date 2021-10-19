@@ -40,4 +40,4 @@ init:
 	python -m pip install --upgrade pip
 
 init-dev: init
-	python -m pip install -r requirements.txt
+	python -m pip install -r dev-requirements.txt
