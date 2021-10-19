@@ -38,4 +38,6 @@ test: clean
 
 init:
 	python -m pip install --upgrade pip
+
+init-dev: init
 	python -m pip install -r requirements.txt
