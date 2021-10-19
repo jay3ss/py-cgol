@@ -1,9 +1,14 @@
 """
 Conway's Game of Life
 """
+import copy
 import enum
 import random
+import time
 from typing import List, Tuple
+
+
+DISPLAY_DELAY = 0.1
 
 
 class CellStatus(enum.Enum):
@@ -27,6 +32,28 @@ class Cell:
             else random.choice([CellStatus.alive, CellStatus.dead])
         self.col, self.row = position
         print('', end='')
+
+    @property
+    def is_alive(self):
+        """
+        Determines if the cell is alive or not
+
+        Returns:
+            bool: True if the cell is alive, Faslse otherwise
+        """
+        return self.state == CellStatus.alive
+
+    def kill(self):
+        """
+        Sets the cell's state to CellStatus.dead
+        """
+        self.state = CellStatus.dead
+
+    def reanimate(self):
+        """
+        Sets the cell's state to CellStatus.alive
+        """
+        self.state = CellStatus.alive
 
     def __repr__(self) -> str:
         return f'<Cell: {self.state} ({self.col}, {self.row})>'
@@ -134,9 +161,85 @@ class Grid:
         ])
 
 
+class GameOfLife:
+    """
+    Runs the game
+    """
+
+    def __init__(self, size: Tuple[int, int], rand: bool) -> None:
+        self._grid = Grid(size=size, rand=rand)
+
+    def run(self, iters: int=1_000):
+        """
+        Starts the game
+        """
+        count = iters
+        while count > 0:
+            self.update()
+            self.display()
+            count -= 1
+
+            time.sleep(DISPLAY_DELAY)
+
+    def update(self) -> None:
+        """
+        Updates the next generation of cells
+        """
+        grid = copy.deepcopy(self._grid)
+        cols, rows = grid._cols, grid._rows
+
+        for col in range(cols):
+            for row in range(rows):
+                location = col, row
+                neighbors = grid.get_neighbors(location)
+                cell = grid.get_cell(location)
+                num_alive = _num_alive(neighbors)
+
+                # rules for updating:
+                # 1. Any live cell with two or three live neighbours survives.
+                # 2. Any dead cell with three live neighbours becomes a live
+                #    cell.
+                # 3. All other live cells die in the next generation. Similarly,
+                #    all other dead cells stay dead.
+                if cell.is_alive and num_alive in [2, 3]:
+                    # don't do anything
+                    continue
+                elif not cell.is_alive and num_alive == 3:
+                    cell.reanimate()
+                else:
+                    cell.kill()
+
+        self._grid = grid
+
+    def display(self):
+        """
+        Displays (prints) the grid to the terminal
+        """
+        print(self._grid)
+        print('='*50)
+
+
+def _num_alive(neighbors: List[Cell]) -> int:
+    """
+    Counts the number living neighbors.
+
+    Args:
+        neighbors (List[Cell]): The neighbors
+
+    Returns:
+        int: The number of living neighbors
+    """
+    return sum([
+        1 if neighbor.is_alive else 0
+        for neighbor in neighbors
+    ])
+
+
 
 if __name__ == '__main__':
-    g = Grid(size=(10, 10), rand=True)
-    print(g)
-    n = g.get_neighbors((0, 0))
-    print(n)
+    # g = Grid(size=(10, 10), rand=True)
+    # print(g)
+    # n = g.get_neighbors((0, 0))
+    # print(n)
+    gol = GameOfLife(size=(25, 25), rand=True)
+    gol.run()
