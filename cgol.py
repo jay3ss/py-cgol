@@ -204,7 +204,7 @@ class GameOfLife:
         return str(self._grid)
 
 
-def display(screen, gol: GameOfLife):
+def display(screen: curses.window, gol: GameOfLife):
     """
     Displays (prints) the grid to the terminal
     """
