@@ -2,6 +2,7 @@
 Conway's Game of Life
 """
 import copy
+import curses
 import enum
 import random
 import time
@@ -211,12 +212,24 @@ class GameOfLife:
 
         self._grid = grid
 
-    def display(self):
-        """
-        Displays (prints) the grid to the terminal
-        """
-        print(self._grid)
-        print('='*50)
+    def __str__(self) -> str:
+        return str(self._grid)
+
+
+def display(screen, gol: GameOfLife):
+    """
+    Displays (prints) the grid to the terminal
+    """
+    curses.curs_set(0)
+    screen.nodelay(True)
+
+    while True:
+        screen.erase()
+        screen.addstr(str(gol))
+        screen.refresh()
+        gol.update()
+        time.sleep(DISPLAY_DELAY)
+
 
 
 def _num_alive(neighbors: List[Cell]) -> int:
@@ -237,9 +250,5 @@ def _num_alive(neighbors: List[Cell]) -> int:
 
 
 if __name__ == '__main__':
-    # g = Grid(size=(10, 10), rand=True)
-    # print(g)
-    # n = g.get_neighbors((0, 0))
-    # print(n)
-    gol = GameOfLife(size=(25, 25), rand=True)
-    gol.run()
+    gol = GameOfLife(size=(30, 30), rand=True)
+    curses.wrapper(lambda s: display(s, gol))
