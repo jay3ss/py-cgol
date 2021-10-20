@@ -2,7 +2,8 @@
 Test suite
 """
 import pytest
-from cgol import Cell, CellStatus, Grid
+from cgol import Cell, CellStatus, GameOfLife, Grid
+import seeds
 
 
 @pytest.fixture
@@ -100,3 +101,29 @@ def test_get_neighbors_bottom_side(grid_3x3: Grid):
     assert n[2].state == CellStatus.alive
     assert n[3].state == CellStatus.dead
     assert n[4].state == CellStatus.dead
+
+
+def test_update():
+    beacon = seeds.seed_to_grid(seeds.seeds['beacon'])
+    gol = GameOfLife(size=(4, 4), rand=False)
+    gol._grid._grid = beacon
+
+    alive = CellStatus.alive
+    dead = CellStatus.dead
+
+    updated_beacon = [
+        [Cell((0, 0), alive), Cell((1, 0), alive), Cell((2, 0), dead),  Cell((3, 0), dead)],
+        [Cell((0, 1), alive), Cell((1, 1), dead),  Cell((2, 1), dead),  Cell((3, 1), dead)],
+        [Cell((0, 2), dead),  Cell((1, 2), dead),  Cell((2, 2), dead),  Cell((3, 2), alive)],
+        [Cell((0, 3), dead),  Cell((1, 3), dead),  Cell((2, 3), alive), Cell((3, 3), alive)],
+    ]
+
+    gol.update()
+
+    for r1, r2 in zip(gol._grid._grid, updated_beacon):
+        for c1, c2 in zip(r1, r2):
+            assert c1.state == c2.state
+
+
+if __name__ == '__main__':
+    test_update()
