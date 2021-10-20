@@ -10,6 +10,7 @@ from typing import List, Tuple
 
 
 DISPLAY_DELAY = 0.1
+DEAD_PROBABILITY = 0.92
 
 
 class CellStatus(enum.Enum):
@@ -29,8 +30,14 @@ class Cell:
         position: Tuple[int, int],
         state: CellStatus=None
         ) -> None:
+        a_prob = 1 - DEAD_PROBABILITY
         self.state = state if state is not None \
-            else random.choice([CellStatus.alive, CellStatus.dead])
+            else random.choices(
+                [CellStatus.alive, CellStatus.dead],
+                weights=(a_prob, DEAD_PROBABILITY),
+                k=1
+            )[0]
+            # else random.choice([CellStatus.alive, CellStatus.dead])
         self.col, self.row = position
         print('', end='')
 
@@ -98,7 +105,7 @@ class Grid:
             Cell: The desired cell
         """
         col, row = position
-        cell = self._grid[row][col]
+        cell = copy.deepcopy(self._grid[row][col])
         return cell
 
     def get_neighbors(self, position: Tuple[int, int]) -> List[Cell]:
@@ -198,7 +205,16 @@ class GameOfLife:
                 else:
                     cell.kill()
 
+                grid.update_cell(cell)
+
         self._grid = grid
+
+    @property
+    def size(self):
+        """
+        Returns the dimensions of the universe as a tuple (cols, rows)
+        """
+        return self._grid._cols, self._grid._rows
 
     def __str__(self) -> str:
         return str(self._grid)
@@ -236,7 +252,10 @@ def _num_alive(neighbors: List[Cell]) -> int:
     ])
 
 
+def main(size: Tuple[int, int], rand: bool) -> None:
+    gol = GameOfLife(size=size, rand=rand)
+    curses.wrapper(lambda s: display(s, gol))
+
 
 if __name__ == '__main__':
-    gol = GameOfLife(size=(30, 30), rand=True)
-    curses.wrapper(lambda s: display(s, gol))
+    main(size=(30, 30), rand=True)
