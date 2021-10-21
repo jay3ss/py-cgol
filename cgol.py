@@ -51,6 +51,23 @@ class Cell:
         """
         return self.state == CellStatus.alive
 
+    @property
+    def position(self):
+        return self.row, self.col
+
+    def set_position(self, new_position: Tuple[int, int]) -> 'Cell':
+        """
+        Sets the cell's position to the given one
+
+        Args:
+            new_position (Tuple[int, int]): (col, row)
+
+        Returns:
+            Cell: this cell
+        """
+        self.col, self.row = new_position
+        return self
+
     def kill(self):
         """
         Sets the cell's state to CellStatus.dead
@@ -64,10 +81,10 @@ class Cell:
         self.state = CellStatus.alive
 
     def __repr__(self) -> str:
-        return f'<Cell: {self.state} ({self.col}, {self.row})>'
+        return f'<Cell: {self.state.name} ({self.col}, {self.row})>'
 
     def __str__(self) -> str:
-        return '*' if self.state is CellStatus.alive else ' '
+        return '*' if self.state is CellStatus.alive else '.'
 
 
 class Grid:
