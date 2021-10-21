@@ -58,23 +58,11 @@ if __name__ == '__main__':
 
         grid = copy.deepcopy(gol._grid)
 
-        # replace the portion of the grid specified by the user with the
-        # specified seed
-        # i, j = 0, 0 # column, row
-        # for r in range(row_start, row_end):
-        #     i = 0
-        #     for c in range(col_start, col_end):
-        #         cell = sub_grid[j][i]
-        #         cell.row = r
-        #         cell.col = c
-        #         grid.update_cell(cell)
-        #         i += 1
-
-        #     j += 1
-        i = 0
-        for row in range(row_start, row_end):
-            grid._grid[row][col_start:col_end] = sub_grid[i]
-            i += 1
+        for i, row in enumerate(range(row_start, row_end), 0):
+            grid._grid[row][col_start:col_end] = [
+                sub_grid[i][j].set_position((col, row))
+                for j, col in enumerate(range(col_start, col_end), 0)
+            ]
 
         gol._grid = grid
 
