@@ -187,8 +187,8 @@ class GameOfLife:
         for col in range(cols):
             for row in range(rows):
                 location = col, row
-                neighbors = grid.get_neighbors(location)
-                cell = grid.get_cell(location)
+                neighbors = self._grid.get_neighbors(location)
+                cell = self._grid.get_cell(location)
                 num_alive = _num_alive(neighbors)
 
                 # rules for updating:
@@ -199,7 +199,7 @@ class GameOfLife:
                 #    all other dead cells stay dead.
                 if cell.is_alive and num_alive in [2, 3]:
                     # don't do anything
-                    continue
+                    pass
                 elif not cell.is_alive and num_alive == 3:
                     cell.reanimate()
                 else:
