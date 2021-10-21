@@ -84,7 +84,7 @@ class Cell:
         return f'<Cell: {self.state.name} ({self.col}, {self.row})>'
 
     def __str__(self) -> str:
-        return '*' if self.state is CellStatus.alive else '.'
+        return '*' if self.state is CellStatus.alive else ' '
 
 
 class Grid:

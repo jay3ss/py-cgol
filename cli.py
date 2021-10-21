@@ -35,10 +35,10 @@ if __name__ == '__main__':
         action='store',
         help='position of the seed'
     )
-    # args = parser.parse_args()
-    args = parser.parse_args(
-        ['--size', '4,4', '--seed', 'beacon', '--seed-position', '0,0']
-    )
+    args = parser.parse_args()
+    # args = parser.parse_args(
+    #     ['--size', '4,4', '--seed', 'beacon', '--seed-position', '0,0']
+    # )
     size = (int(args.size.split(',')[0]), int(args.size.split(',')[1]))
     rand = args.rand
     seed = seeds[args.seed] if args.seed else None
